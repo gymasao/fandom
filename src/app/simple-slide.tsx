@@ -12,51 +12,42 @@ const contributors = [
   { name: "伊藤 健太", contribution: "デザイン貢献者" },
 ]
 
-export default function ContributorDisplay() {
-  const [items, setItems] = useState(
-    contributors.map((contributor, index) => ({
-      ...contributor,
-      id: index,
-      position: index === 0 ? "center" : "right",
-    })),
-  )
+export default function SimpleSlideDisplay() {
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [direction, setDirection] = useState("next")
+  const [isAnimating, setIsAnimating] = useState(false)
+
+  // 次のインデックスを計算
+  const nextIndex = (currentIndex + 1) % contributors.length
 
   // 5秒ごとに次の貢献者に切り替える
   useEffect(() => {
     const interval = setInterval(() => {
-      // 現在の中央の項目を左に移動
-      setItems((current) =>
-        current.map((item) => {
-          if (item.position === "center") {
-            return { ...item, position: "left" }
-          }
-          if (
-            item.position === "right" &&
-            item.id === (current.find((i) => i.position === "center").id + 1) % contributors.length
-          ) {
-            return { ...item, position: "center" }
-          }
-          return item
-        }),
-      )
+      setDirection("next")
+      setIsAnimating(true)
 
-      // アニメーション終了後に位置をリセット
       setTimeout(() => {
-        setItems((current) => {
-          const centerItemId = current.find((i) => i.position === "center").id
-
-          return current.map((item) => {
-            if (item.position === "left") {
-              return { ...item, position: "right" }
-            }
-            return item
-          })
-        })
-      }, 1000) // アニメーション時間より長く
+        setCurrentIndex(nextIndex)
+        setIsAnimating(false)
+      }, 600) // アニメーション時間
     }, 5000) // 表示時間
 
     return () => clearInterval(interval)
-  }, [])
+  }, [currentIndex, nextIndex])
+
+  const currentContributor = contributors[currentIndex]
+  const nextContributor = contributors[nextIndex]
+
+  // スライドアニメーションのクラスを取得
+  const getSlideClasses = (isCurrent) => {
+    if (!isAnimating) return "translate-x-0 opacity-100"
+
+    if (isCurrent) {
+      return "translate-x-[-100%] opacity-0"
+    } else {
+      return "translate-x-0 opacity-100"
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black p-4 overflow-hidden">
@@ -64,23 +55,21 @@ export default function ContributorDisplay() {
         {/* シンプルな枠 */}
         <div className="absolute inset-0 border-8 border-yellow-500 rounded-lg" />
 
-        {/* 内容 - 一方向スライドアニメーション */}
+        {/* 内容 - シンプルなスライドアニメーション */}
         <div className="bg-black p-16 rounded-lg flex flex-col items-center justify-center min-h-[70vh] relative z-10 overflow-hidden">
-          {/* 各貢献者のコンテンツ */}
-          {items.map((item) => (
+          {/* 現在表示中のコンテンツ */}
+          <div className={`absolute w-full transition-all duration-600 ease-out ${getSlideClasses(true)}`}>
+            <ContentDisplay contributor={currentContributor} />
+          </div>
+
+          {/* 次に表示するコンテンツ */}
+          {isAnimating && (
             <div
-              key={item.id}
-              className={`absolute w-full transition-all duration-800 ease-in-out ${
-                item.position === "center"
-                  ? "translate-x-0 opacity-100"
-                  : item.position === "left"
-                    ? "-translate-x-full opacity-0"
-                    : "translate-x-full opacity-0"
-              }`}
+              className={`absolute w-full transition-all duration-600 ease-out translate-x-[100%] ${getSlideClasses(false)}`}
             >
-              <ContentDisplay contributor={contributors[item.id]} />
+              <ContentDisplay contributor={nextContributor} />
             </div>
-          ))}
+          )}
 
           {/* コーナー装飾 - シンプルに */}
           <Award size={64} className="absolute top-4 left-4 text-yellow-500" />
