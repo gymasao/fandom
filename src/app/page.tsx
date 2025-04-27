@@ -3,8 +3,18 @@
 import { useEffect, useState } from "react"
 import { Award } from "lucide-react"
 
+type Contributor = {
+  name: string
+  contribution: string
+}
+
+type Item = Contributor & {
+  id: number
+  position: "left" | "center" | "right"
+}
+
 // 貢献者データの例
-const contributors = [
+const contributors: Contributor[] = [
   { name: "田中 太郎", contribution: "営業貢献者" },
   { name: "佐藤 花子", contribution: "技術貢献者" },
   { name: "鈴木 一郎", contribution: "サポート貢献者" },
@@ -13,7 +23,7 @@ const contributors = [
 ]
 
 export default function ContributorDisplay() {
-  const [items, setItems] = useState(
+  const [items, setItems] = useState<Item[]>(
     contributors.map((contributor, index) => ({
       ...contributor,
       id: index,
@@ -32,7 +42,7 @@ export default function ContributorDisplay() {
           }
           if (
             item.position === "right" &&
-            item.id === (current.find((i) => i.position === "center").id + 1) % contributors.length
+            item.id === ((current.find((i) => i.position === "center")?.id ?? 0) + 1) % contributors.length
           ) {
             return { ...item, position: "center" }
           }
@@ -43,7 +53,7 @@ export default function ContributorDisplay() {
       // アニメーション終了後に位置をリセット
       setTimeout(() => {
         setItems((current) => {
-          const centerItemId = current.find((i) => i.position === "center").id
+          const centerItemId = current.find((i) => i.position === "center")?.id ?? 0
 
           return current.map((item) => {
             if (item.position === "left") {
@@ -70,13 +80,12 @@ export default function ContributorDisplay() {
           {items.map((item) => (
             <div
               key={item.id}
-              className={`absolute w-full transition-all duration-800 ease-in-out ${
-                item.position === "center"
-                  ? "translate-x-0 opacity-100"
-                  : item.position === "left"
-                    ? "-translate-x-full opacity-0"
-                    : "translate-x-full opacity-0"
-              }`}
+              className={`absolute w-full transition-all duration-800 ease-in-out ${item.position === "center"
+                ? "translate-x-0 opacity-100"
+                : item.position === "left"
+                  ? "-translate-x-full opacity-0"
+                  : "translate-x-full opacity-0"
+                }`}
             >
               <ContentDisplay contributor={contributors[item.id]} />
             </div>
@@ -94,7 +103,7 @@ export default function ContributorDisplay() {
 }
 
 // コンテンツ表示用のコンポーネント
-function ContentDisplay({ contributor }) {
+function ContentDisplay({ contributor }: { contributor: Contributor }) {
   return (
     <>
       {/* ヘッダー */}
