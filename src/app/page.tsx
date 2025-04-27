@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react"
 import { Award } from "lucide-react"
 
+type ContributionType = "fandom" | "small" | "medium" | "big"
+
 type Contributor = {
   name: string
-  contribution: string
+  contribution: ContributionType
 }
 
 type Item = Contributor & {
@@ -15,12 +17,35 @@ type Item = Contributor & {
 
 // 貢献者データの例
 const contributors: Contributor[] = [
-  { name: "田中 太郎", contribution: "営業貢献者" },
-  { name: "佐藤 花子", contribution: "技術貢献者" },
-  { name: "鈴木 一郎", contribution: "サポート貢献者" },
-  { name: "山田 優子", contribution: "マーケティング貢献者" },
-  { name: "伊藤 健太", contribution: "デザイン貢献者" },
+  { name: "田中 太郎", contribution: "small" },
+  { name: "佐藤 花子", contribution: "medium" },
+  { name: "鈴木 一郎", contribution: "big" },
+  { name: "山田 優子", contribution: "fandom" },
+  { name: "伊藤 健太", contribution: "fandom" },
 ]
+
+const contributionStyles: Record<ContributionType, { bgColor: string, textColor: string, borderColor: string }> = {
+  "fandom": {
+    bgColor: "bg-gray-100",
+    textColor: "text-gray-900",
+    borderColor: "border-gray-400"
+  },
+  "small": {
+    bgColor: "bg-blue-100",
+    textColor: "text-blue-900",
+    borderColor: "border-blue-400"
+  },
+  "medium": {
+    bgColor: "bg-purple-100",
+    textColor: "text-purple-900",
+    borderColor: "border-purple-400"
+  },
+  "big": {
+    bgColor: "bg-yellow-100",
+    textColor: "text-yellow-900",
+    borderColor: "border-yellow-400"
+  }
+}
 
 export default function ContributorDisplay() {
   const [items, setItems] = useState<Item[]>(
@@ -104,24 +129,26 @@ export default function ContributorDisplay() {
 
 // コンテンツ表示用のコンポーネント
 function ContentDisplay({ contributor }: { contributor: Contributor }) {
+  const styles = contributionStyles[contributor.contribution];
+
   return (
-    <>
+    <div className={`${styles.bgColor} p-16 rounded-lg flex flex-col items-center justify-center min-h-[70vh] relative z-10 overflow-hidden`}>
       {/* ヘッダー */}
-      <h1 className="text-5xl md:text-6xl font-bold text-yellow-500 mb-12 text-center">{contributor.contribution}</h1>
+      <h1 className={`text-5xl md:text-6xl font-bold ${styles.textColor} mb-12 text-center`}>{contributor.contribution}</h1>
 
       {/* 装飾線 */}
-      <div className="w-3/4 h-1 bg-yellow-500 mb-12 mx-auto"></div>
+      <div className={`w-3/4 h-1 ${styles.borderColor} mb-12 mx-auto`}></div>
 
       {/* 名前 */}
-      <div className="text-7xl md:text-8xl lg:text-9xl font-bold text-white mb-12 text-center">{contributor.name}</div>
+      <div className={`text-7xl md:text-8xl lg:text-9xl font-bold ${styles.textColor} mb-12 text-center`}>{contributor.name}</div>
 
       {/* 装飾線 */}
-      <div className="w-3/4 h-1 bg-yellow-500 mb-8 mx-auto"></div>
+      <div className={`w-3/4 h-1 ${styles.borderColor} mb-8 mx-auto`}></div>
 
       {/* 日付 */}
-      <div className="text-3xl md:text-4xl text-yellow-500 font-semibold text-center">
+      <div className={`text-3xl md:text-4xl ${styles.textColor} font-semibold text-center`}>
         {new Date().toLocaleDateString("ja-JP", { year: "numeric", month: "long", day: "numeric" })}
       </div>
-    </>
+    </div>
   )
 }
