@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { Award } from "lucide-react"
 
-type ContributionType = "fandom" | "small" | "medium" | "big"
+type ContributionType = "団結" | "SMALLファンダム" | "MEDIUMファンダム" | "BIGファンダム"
 
 type Contributor = {
   name: string
@@ -17,32 +17,29 @@ type Item = Contributor & {
 
 // 貢献者データの例
 const contributors: Contributor[] = [
-  { name: "田中 太郎", contribution: "small" },
-  { name: "佐藤 花子", contribution: "medium" },
-  { name: "鈴木 一郎", contribution: "big" },
-  { name: "山田 優子", contribution: "fandom" },
-  { name: "伊藤 健太", contribution: "fandom" },
+  { name: "よっしー", contribution: "BIGファンダム" },
+  { name: "kopi", contribution: "BIGファンダム" },
 ]
 
 const contributionStyles: Record<ContributionType, { bgColor: string, textColor: string, borderColor: string }> = {
-  "fandom": {
-    bgColor: "bg-gray-100",
-    textColor: "text-gray-900",
+  "団結": {
+    bgColor: "bg-black",
+    textColor: "text-white",
     borderColor: "border-gray-400"
   },
-  "small": {
-    bgColor: "bg-blue-100",
-    textColor: "text-blue-900",
+  "SMALLファンダム": {
+    bgColor: "bg-black",
+    textColor: "text-white",
     borderColor: "border-blue-400"
   },
-  "medium": {
-    bgColor: "bg-purple-100",
-    textColor: "text-purple-900",
-    borderColor: "border-purple-400"
+  "MEDIUMファンダム": {
+    bgColor: "bg-black",
+    textColor: "text-white",
+    borderColor: "border-yellow-400"
   },
-  "big": {
-    bgColor: "bg-yellow-100",
-    textColor: "text-yellow-900",
+  "BIGファンダム": {
+    bgColor: "bg-black",
+    textColor: "text-white",
     borderColor: "border-yellow-400"
   }
 }
@@ -134,13 +131,13 @@ function ContentDisplay({ contributor }: { contributor: Contributor }) {
   return (
     <div className={`${styles.bgColor} p-16 rounded-lg flex flex-col items-center justify-center min-h-[70vh] relative z-10 overflow-hidden`}>
       {/* ヘッダー */}
-      <h1 className={`text-5xl md:text-6xl font-bold ${styles.textColor} mb-12 text-center`}>{contributor.contribution}</h1>
+      <h1 className={`text-7xl md:text-8xl lg:text-9xl font-bold ${styles.textColor} mb-12 text-center`}>{contributor.contribution}</h1>
 
       {/* 装飾線 */}
       <div className={`w-3/4 h-1 ${styles.borderColor} mb-12 mx-auto`}></div>
 
       {/* 名前 */}
-      <div className={`text-7xl md:text-8xl lg:text-9xl font-bold ${styles.textColor} mb-12 text-center`}>{contributor.name}</div>
+      <div className={`text-8xl md:text-9xl lg:text-10xl font-bold ${styles.textColor} mb-12 text-center`}>{contributor.name}</div>
 
       {/* 装飾線 */}
       <div className={`w-3/4 h-1 ${styles.borderColor} mb-8 mx-auto`}></div>
